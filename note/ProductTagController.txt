@@ -1,0 +1,99 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\ProductTag;
+use Illuminate\Http\Request;
+
+
+class ProductTagController extends Controller
+{
+    public function index()
+    {
+        $productTag = ProductTag::with(["tag","product"])->get();
+
+
+        return response()->json([
+            "data" => $productTag,
+            "message" => "Get ProductTag successfully !"
+        ]);
+    }
+
+    public function show($id)
+    {
+        $productTag = ProductTag::with(["tag","product"])->get();
+        if (!$productTag) {
+            return response()->json([
+                "data" => $productTag,
+                "message" => "Get one ProductTag successfully !",
+            ]);
+        }
+
+        return response()->json([
+            "data" => $productTag,
+            "message" => "Get one ProductTag successfully !"
+        ]);
+    }
+
+    public function store(Request $req)
+    {
+
+        $validate = $req->validate([
+            'product_id' => 'required|exists:products,_id',
+            'tag_id'     => 'required|exists:tags,_id',
+        ]);
+
+        $productTag = new ProductTag();
+        $productTag->fill($validate);
+        $productTag->save();
+
+        return response()->json([
+            "data" => $productTag,
+            "message" => "Created ProductTag successfully !",
+        ]);
+    }
+
+    public function update(Request $req, $id)
+    {
+
+        $productTag = ProductTag::find($id);
+
+        if (!$productTag) {
+            return response()->json([
+                "message" => "ProductTag is not found ! "
+            ]);
+        }
+
+        $validate = $req->validate([
+            'product_id' => 'required|exists:products,_id',
+            'tag_id'     => 'required|exists:tags,_id',
+        ]);
+
+        $productTag->fill($validate);
+        $productTag->save();
+
+        return response()->json([
+            "data" => $productTag,
+            "message" => "Updated ProductTag successfully !"
+        ]);
+    }
+
+    public function destroy($id)
+    {
+        $productTag = ProductTag::find($id);
+
+        if (!$productTag) {
+            return response()->json([
+                "message" => "ProductTag is not found ! "
+            ]);
+        }
+
+        $productTag->delete();
+
+        return response()->json([
+            "data" => $id,
+            "message" => "Deleted ProductTag successfully !"
+        ]);
+    }
+}

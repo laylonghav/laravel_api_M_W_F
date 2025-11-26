@@ -1,0 +1,101 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\ProductDetail;
+use Illuminate\Http\Request;
+
+class ProductDetailController extends Controller
+{
+    public function index()
+    {
+        $productDetails =  ProductDetail::query()->get();
+
+        return [
+            "data" => $productDetails,
+            "message" => "Get Product Detail successfully!"
+        ];
+    }
+
+
+
+    public function show($id)
+    {
+        $productDetails = ProductDetail::where("id", $id)->get();
+
+        if (!$productDetails) {
+            return [
+                "message" => "Product detail is not found."
+            ];
+        }
+
+
+        return [
+            "data" => $productDetails
+        ];
+    }
+
+    public function store(Request $req)
+    {
+        $input = [
+            "barcode" => $req->input("barcode"),
+            "make_in" => $req->input("make_in"),
+            "color" => $req->input("color"),
+        ];
+
+        $productDetails = ProductDetail::create($input);
+
+        return [
+            "data" => $productDetails,
+            "message" => "Created product detail successfully !",
+        ];
+    }
+
+
+    public function update(Request $req, $id)
+    {
+        $productDetails = ProductDetail::find($id);
+
+        if (!$productDetails) {
+            return [
+                "message" => "Product detail is not found."
+            ];
+        }
+
+
+        $input = [
+            "barcode" => $req->input("barcode"),
+            "make_in" => $req->input("make_in"),
+            "color" => $req->input("color"),
+        ];
+
+        $productDetails->update($input);
+
+
+
+        return [
+            "data" => $productDetails,
+            "message" => "Updated product detail successfully !",
+        ];
+    }
+
+
+    public function destroy($id)
+    {
+        $productDetails = ProductDetail::find($id);
+
+        if (!$productDetails) {
+            return [
+                "message" => "Product detail is not found."
+            ];
+        }
+
+        $productDetails->delete();
+
+        return [
+            "data" => $productDetails,
+            "message" => "Deleted product detail successfully !",
+        ];
+    }
+}

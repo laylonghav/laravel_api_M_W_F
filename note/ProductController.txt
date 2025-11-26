@@ -1,0 +1,231 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\Product;
+use Illuminate\Http\Request;
+
+class ProductController extends Controller
+{
+    public function index()
+    {
+        $product = Product::query()->get();
+        // return [
+        //     "data" => $product,
+        // ];
+
+        return response()->json([
+            "data" => $product,
+        ],201);
+    }
+
+    public function show($id)
+    {
+        $product = Product::where("_id", $id)->get();
+
+        if (!$product) {
+            return [
+                "message" => "Product is not found !",
+            ];
+        }
+
+        return [
+            "data" => $product,
+        ];
+    }
+
+    public function store(Request $req)
+    {
+        // $input = [
+        //     "name" => $req->input("name"),
+        //     "description" => $req->input("description"),
+        //     "qty" => $req->input("qty"),
+        //     "status" => $req->input("status"),
+        // ];
+
+        $validate = $req->validate([
+            "name" => "required|string|max:225|min:3",
+            "description" => "nullable|string|max:255",
+            "qty" => "required|integer|min:0",
+            "status" => "required|boolean"
+        ]);
+
+        $product = new Product();
+        $product->fill($validate);
+        $product->save();
+
+        return [
+            "data" => $product,
+        ];
+    }
+
+
+    public function update(Request $req, $id)
+    {
+
+        $product = Product::find($id);
+
+        if (!$product) {
+            return [
+                "message" => "Product is not found !",
+            ];
+        }
+
+        // $input = [
+        //     "name" => $req->input("name"),
+        //     "description" => $req->input("description"),
+        //     "qty" => $req->input("qty"),
+        //     "status" => $req->input("status"),
+        // ];
+
+        $validate = $req->validate([
+            "name" => "required|string|min:3|max:255",
+            "description" => "nullable|string|min:3|max:255",
+            "qty" => "required|integer|min:0",
+            "status" => "required|boolean"
+        ]);
+
+        // $product = new Product();
+        $product->fill($validate);
+        $product->save();
+
+        return [
+            "data" => $product,
+            "message" => "Updated product successfully ! ",
+        ];
+    }
+
+
+    public function destroy($id)
+    {
+
+        $product = Product::find($id);
+
+        if (!$product) {
+            return [
+                "message" => "Product is not found !",
+            ];
+        }
+
+        $product->delete();
+
+        return [
+            "data" => $id,
+            "message" => "Deleted product successfully ! ",
+        ];
+    }
+}
+
+
+
+
+
+
+
+
+========================================relationship====================================
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\Product;
+use Illuminate\Http\Request;
+
+class ProductController extends Controller
+{
+    public function index()
+    {
+        $products =  Product::query()->get();
+
+        return response()->json([
+            "data" => $products,
+            "message" => "Get Product successfully!"
+        ]);
+    }
+
+
+
+    public function show($id)
+    {
+        $product = Product::find($id);
+
+        if (!$product) {
+            return [
+                "message" => "Product is not found."
+            ];
+        }
+
+
+        return [
+            "data" => $product
+        ];
+    }
+
+    public function store(Request $req)
+    {
+        $input = [
+            "name" => $req->input("name"),
+            "description" => $req->input("description"),
+            "category_id" => $req->input("category_id"),
+            "qty" => $req->input("qty"),
+            "status" => $req->input("status"),
+        ];
+
+        $product = Product::create($input);
+
+        return [
+            "data" => $product,
+            "message" => "Created product successfully !",
+        ];
+    }
+
+
+    public function update(Request $req, $id)
+    {
+        $product = Product::find($id);
+
+        if (!$product) {
+            return [
+                "message" => "Product is not found."
+            ];
+        }
+
+
+        $input = [
+            "name" => $req->input("name"),
+            "description" => $req->input("description"),
+            "qty" => $req->input("qty"),
+            "status" => $req->input("status"),
+        ];
+
+        $product->update($input);
+        
+
+
+        return [
+            "data" => $product,
+            "message" => "Updated product successfully !",
+        ];
+    }
+
+
+    public function destroy($id)
+    {
+        $product = Product::find($id);
+
+        if (!$product) {
+            return [
+                "message" => "Product is not found."
+            ];
+        }
+
+        $product->delete();
+
+        return [
+            "data" => $product,
+            "message" => "Deleted product successfully !",
+        ];
+    }
+}

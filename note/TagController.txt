@@ -1,0 +1,104 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\Tag;
+use Illuminate\Http\Request;
+
+class TagController extends Controller
+{
+    public function index()
+    {
+        $tags = Tag::with("products")->get();
+
+        return response()->json([
+            "data" => $tags,
+            "message" => "Get Tag successfully!"
+        ]);
+    }
+
+    
+
+
+
+    public function show($id)
+    {
+        $tag = Tag::find($id);
+        if (!$tag) {
+            return response()->json([
+                "data" => $tag,
+                "message" => "Get one Tag successfully !",
+            ]);
+        }
+
+        $tag->load('products'); // Load relationships
+
+        return response()->json([
+            "data" => $tag,
+            "message" => "Got Tag successfully !",
+        ]);
+    }
+
+    public function store(Request $req)
+    {
+
+        $validate = $req->validate([
+            "name" => "required|string|min:3|max:255"
+        ]);
+
+        $tag = new Tag();
+        $tag->fill($validate);
+        $tag->save();
+        $tag->load('products'); // Load relationships
+
+        return response()->json([
+            "data" => $tag,
+            "message" => "Created Tag successfully !",
+        ]);
+    }
+
+    public function update(Request $req, $id)
+    {
+
+        $tag = Tag::find($id);
+
+        if (!$tag) {
+            return response()->json([
+                "message" => "Tag is not found ! "
+            ]);
+        }
+
+
+        $validate = $req->validate([
+            "name" => "required|string|min:3|max:255",
+        ]);
+
+        $tag->fill($validate);
+        $tag->save();
+        $tag->load('products'); // Load relationships
+
+        return response()->json([
+            "data" => $tag,
+            "message" => "Updated Tag successfully !"
+        ]);
+    }
+
+    public function destroy($id)
+    {
+        $tag = Tag::find($id);
+
+        if (!$tag) {
+            return response()->json([
+                "message" => "Tag is not found ! "
+            ]);
+        }
+
+        $tag->delete();
+
+        return response()->json([
+            "data" => $id,
+            "message" => "Deleted Tag successfully !"
+        ]);
+    }
+}

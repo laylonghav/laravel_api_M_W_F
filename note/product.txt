@@ -1,0 +1,71 @@
+Route::get("product", function () {
+    $product = Product::all();
+
+    return [
+        "data" => $product
+    ];
+});
+
+Route::post("product", function (Request $req) {
+    $input = [
+        "name" => $req->input("name"),
+        "description" => $req->input("description"),
+        "qty" => $req->input("qty"),
+        "status" => $req->input("status"),
+    ];
+
+    // $product = Product::create($input);
+    // $product = Product::insert($input);
+    $product = new Product();
+    $product->fill($input);
+    $product->save();
+
+
+    return [
+        "data" => $product,
+        "message" => "Created products successfully !",
+    ];
+});
+
+
+Route::put("product/{id}", function (Request $req, $id) {
+    $product = Product::find($id);
+
+    if (!$product) {
+        return [
+            "message" => "Product is not found",
+        ];
+    }
+
+    $input = [
+        "name" => $req->input("name"),
+        "description" => $req->input("description"),
+        "qty" => $req->input("qty"),
+        "status" => $req->input("status"),
+    ];
+
+    $product->update($input);
+
+    return [
+        "data" => $product,
+        "message" => "Updated product successfully !"
+    ];
+});
+
+
+Route::delete("product/{id}", function ($id) {
+
+    $product = Product::find($id);
+    if (!$product) {
+        return [
+            "message" => "Product is not found",
+        ];
+    }
+
+    $product->delete();
+
+    return [
+        "id" => $id,
+        "message" => "Deleted product successfully ! ",
+    ];
+});

@@ -1,0 +1,9 @@
+public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id', '_id');
+    }
+
+    public function tags(): BelongsToMany
+    {
+        return $this->belongsToMany(Tag::class, 'product_tag', 'product_id', 'tag_id');
+    }

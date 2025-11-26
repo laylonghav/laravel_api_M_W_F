@@ -1,0 +1,9 @@
+$product = Product::find($item["product_id"]);
+                if ($product) {
+                    $currentQty = (int)$product->qty;
+                    $orderQty = (int)$item["qty"];
+
+                    $newQty = max(0, $currentQty - $orderQty);
+
+                    $product->update(["qty" => $newQty]);
+}

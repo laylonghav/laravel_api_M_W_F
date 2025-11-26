@@ -1,0 +1,17 @@
+<?php
+
+namespace App\Models;
+
+use MongoDB\Laravel\Eloquent\Model;
+
+class ProductDetail extends Model
+{
+    protected $connection = 'mongodb';
+    protected $collection = "product_detail_tble";
+    protected $fillable = ["barcode", "make_in", "color"];
+
+    public function detail()
+    {
+        return $this->hasOne(Product::class, "product_detail_id", "_id");
+    }
+}

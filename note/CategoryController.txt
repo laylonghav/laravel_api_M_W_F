@@ -1,0 +1,95 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\Category;
+use Illuminate\Http\Request;
+
+class CategoryController extends Controller
+{
+    public function index()
+    {
+        $category = Category::with("products")->get();
+
+        return response()->json([
+            "data" => $category,
+            "messagge" => "Get Category successfully !",
+        ], 200);
+    }
+
+
+    public function show($id)
+    {
+        $category = Category::find($id);
+
+        if (!$category) {
+            return response()->json([
+                "message" => "Category is not found."
+            ], 404);
+        }
+    }
+
+    public function store(Request $req)
+    {
+        $validate = $req->validate([
+            "name" => "required|string|min:3|max:255",
+            "description" => "nullable|min:3|max:255",
+        ]);
+
+        $category = new Category();
+        $category->fill($validate);
+        $category->save();
+
+        return response()->json([
+            "data" => $category,
+            "message" => "Created Category successfully ! ",
+        ], 200);
+    }
+
+    public function update(Request $req, $id)
+    {
+
+        $category = Category::find($id);
+
+
+        if (!$category) {
+            return response()->json([
+                "message" => "Product is not found.",
+            ]);
+        }
+
+        $validate = $req->validate([
+            "name" => "required|string|min:3|max:255",
+            "description" => "required|string|min:3|max:255",
+        ]);
+
+        $category->fill($validate);
+        $category->save();
+
+
+        return response()->json([
+            "data" => $category,
+            "message" => "Updated Category successfully ! ",
+        ]);
+    }
+
+
+    public function destroy($id)
+    {
+        $category = Category::find($id);
+
+        if (!$category) {
+            return response()->json([
+                "message" => "Category is not found."
+            ]);
+        }
+
+        $category->delete();
+
+        return response()->json([
+            "id" => $id,
+            "message" => "Deleted category successfully ! ",
+        ]);
+    }
+}
